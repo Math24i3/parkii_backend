@@ -62,7 +62,7 @@ return [
             'secret' => env('DO_SECRET_ACCESS_KEY'),
             'region' => env('DO_DEFAULT_REGION'),
             'bucket' => env('DO_BUCKET'),
-            #'folder' => env('DO_FOLDER'),
+            'folder' => env('DO_FOLDER'),
             'cdn_endpoint' => env('DO_CDN_ENDPOINT'),
             'url' => env('DO_URL'),
             'endpoint' => env('DO_ENDPOINT'),
