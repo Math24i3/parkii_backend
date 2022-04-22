@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\CdnService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
@@ -59,5 +57,4 @@ class DOSpacesController extends Controller
 
         return response()->json(['message' => 'works'], BaseResponse::HTTP_OK);
     }
-
 }

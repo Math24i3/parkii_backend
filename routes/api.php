@@ -1,6 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DOSpacesController;
+use App\Http\Controllers\ParkingDataController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/upload', [DOSpacesController::class, 'store']);
+
+    Route::prefix('parking')->group(function () {
+        Route::get('/zones', [ParkingDataController::class, 'zones']);
+        Route::get('/restrictions', [ParkingDataController::class, 'restrictions']);
+    });
 });
 
 
-Route::post('/upload', [\App\Http\Controllers\DOSpacesController::class, 'store']);
