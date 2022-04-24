@@ -21,16 +21,6 @@ services:
             - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
         networks:
             - app-network
-    #Cron handler
-    cron:
-      build:
-        context: .
-        dockerfile: docker/dev/cron.dockerfile
-      container_name: cron
-      volumes:
-        - ./:/var/www
-      networks:
-        - app-network
 
     # Redis instance
     redis:
