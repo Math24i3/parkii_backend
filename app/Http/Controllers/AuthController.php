@@ -7,9 +7,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
+/**
+ *
+ */
 class AuthController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function register(Request $request): JsonResponse
     {
         $validatedData = $request->validate([
@@ -24,20 +32,36 @@ class AuthController extends Controller
             'password' => Hash::make($validatedData['password']),
         ]);
 
+        if (!$user) {
+            return response()->json([
+                'message' => 'user could not be created',
+            ], BaseResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
-        ]);
+        ], BaseResponse::HTTP_OK);
     }
 
-    public function login(Request $request): JsonResponse
+    /**
+     * @param Request $request
+     * @return BaseResponse
+     */
+    public function login(Request $request): BaseResponse
     {
-        if (!Auth::attempt($request->only('email', 'password'))) {
+
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (!Auth::attempt($credentials)) {
             return response()->json([
                 'message' => 'Invalid login details'
-            ], 401);
+            ], BaseResponse::HTTP_UNAUTHORIZED);
         }
 
         $user = User::where('email', $request['email'])->firstOrFail();
@@ -45,13 +69,20 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-        ]);
+            'access_token'  => $token,
+            'token_type'    => 'Bearer',
+            'user'          => $user
+        ], BaseResponse::HTTP_OK);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function user(Request $request)
     {
-        return $request->user();
+        return response()->json([
+            'user' => $request->user(),
+        ], BaseResponse::HTTP_OK);
     }
 }

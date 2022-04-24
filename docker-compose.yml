@@ -23,6 +23,16 @@ services:
             - ./docker/dev/xdebug/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
         networks:
             - app-network
+    cron:
+        build:
+            context: .
+            dockerfile: docker/dev/cron.dockerfile
+        container_name: cron
+        volumes:
+            -   ./:/var/www
+        networks:
+            - app-network
+
     # Redis instance
     redis:
         container_name: redis
