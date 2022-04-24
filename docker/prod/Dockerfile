@@ -25,7 +25,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install extensions
 RUN pecl install redis
-RUN docker-php-ext-install pdo_mysql zip exif pcntl gd
+RUN docker-php-ext-install pdo pdo_mysql zip exif pcntl gd
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-enable redis
 
@@ -38,6 +38,8 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # Copy existing application directory contents
 ADD . /var/www
+
+COPY crontab /etc/crontabs/root
 
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www

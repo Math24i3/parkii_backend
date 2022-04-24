@@ -4,4 +4,7 @@ RUN docker-php-ext-install pdo pdo_mysql
 
 COPY crontab /etc/crontabs/root
 
+# Copy existing application directory permissions
+COPY --chown=www-data:www-data . /var/www
+
 CMD ["crond", "-f"]
