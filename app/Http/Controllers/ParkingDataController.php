@@ -93,7 +93,7 @@ class ParkingDataController extends Controller
         }
         $json = json_decode($restrictions, true, 512, JSON_THROW_ON_ERROR);
 
-        if ($validFields['latitude'] && $validFields['longitude']) {
+        if (isset($validFields['latitude'], $validFields['longitude'])) {
             foreach ($json['features'] as $key => $feature) {
                 foreach ($feature['geometry']['coordinates'][0] as $coords) {
                     $to = ['latitude' => $coords[1], 'longitude' => $coords[0]];
