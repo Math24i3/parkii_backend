@@ -32,13 +32,13 @@ class ParkingDataController extends Controller
     }
 
     /**
+     * Return restrictions in a GeoJson format
      * @param Request $request
      * @return BaseResponse
      * @throws JsonException
      */
     public function restrictions(Request $request): BaseResponse {
         // Only valid fields are allowed to pass through
-
         $validFields = $request->only([
             'latitude',
             'longitude',
