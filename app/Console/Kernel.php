@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\NotifyUsers;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -17,6 +18,8 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('sanctum:prune-expired --hours=24')->everyMinute();
+        $schedule->job(new NotifyUsers())->everyMinute();
+
     }
 
     /**
