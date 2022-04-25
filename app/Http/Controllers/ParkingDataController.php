@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Validator;
 use JsonException;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
+/**
+ *
+ */
 class ParkingDataController extends Controller
 {
     /**
@@ -26,23 +29,6 @@ class ParkingDataController extends Controller
         $json = json_decode($zones, true, 512, JSON_THROW_ON_ERROR);
 
         return response()->json($json, BaseResponse::HTTP_OK);
-    }
-
-    private function calculateDistance(array $from, array $to): string
-    {
-        //Calculate distance from latitude and longitude
-        $theta = $from['longitude'] - $to['longitude'];
-        $dist = sin(deg2rad($from['latitude'])) *
-            sin(deg2rad($to['latitude'])) +
-            cos(deg2rad($from['latitude'])) *
-            cos(deg2rad($to['latitude'])) *
-            cos(deg2rad($theta));
-
-        $dist = acos($dist);
-        $dist = rad2deg($dist);
-        $miles = $dist * 60 * 1.1515;
-
-        return ($miles * 1.609344);
     }
 
     /**
@@ -107,9 +93,28 @@ class ParkingDataController extends Controller
             }
             $json['totalFeatures'] = count($json['features']);
         }
-
-
-
         return response()->json($json, BaseResponse::HTTP_OK);
+    }
+
+    /**
+     * Returns the distance to and from in kilometers
+     * @param array $from
+     * @param array $to
+     * @return string
+     */
+    private function calculateDistance(array $from, array $to): string
+    {
+        //Calculate distance from latitude and longitude
+        $theta = $from['longitude'] - $to['longitude'];
+        $dist = sin(deg2rad($from['latitude'])) *
+            sin(deg2rad($to['latitude'])) +
+            cos(deg2rad($from['latitude'])) *
+            cos(deg2rad($to['latitude'])) *
+            cos(deg2rad($theta));
+
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+
+        return (($dist * 60 * 1.1515) * 1.609344);
     }
 }
