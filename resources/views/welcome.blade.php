@@ -51,10 +51,15 @@
                                             <i class="fa fa-question-circle"></i>
                                         </a>
                                     </h4>
-                                    <p class="list-group-item-text">
-                                        <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_rylykdkp.json"  background="transparent"  speed="1"  style="width: 30px; height: 30px;"  loop  autoplay></lottie-player>
-                                    </p>
-                                    </div>
+                                    @php
+                                        try {
+                                            \DB::connection()->getPDO();
+                                            echo '<lottie-player src="https://assets6.lottiefiles.com/packages/lf20_rylykdkp.json"  background="transparent"  speed="1"  style="width: 30px; height: 30px;"  loop  autoplay></lottie-player>';
+                                            } catch (\Exception $e) {
+                                            echo '<lottie-player src="https://assets3.lottiefiles.com/packages/lf20_qpwbiyxf.json"  background="transparent"  speed="1"  style="width: 30px; height: 30px;"  loop  autoplay></lottie-player>';
+                                        }
+                                    @endphp
+                                </div>
                             </div>
                         </div>
                     </div>
