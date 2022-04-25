@@ -24,12 +24,16 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
+            'phone'     => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:8',
+            'car'       => 'nullable|string|min:7'
         ]);
 
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
+            'phone' => $validatedData['phone'] ?? null,
+            'car' => $validatedData['car']  ?? null
         ]);
 
         if (!$user) {
