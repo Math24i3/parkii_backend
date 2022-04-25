@@ -40,7 +40,7 @@
                                         </a>
                                     </h4>
                                     <p class="list-group-item-text">
-                                        <span class="label label-success">Running</span>
+                                        <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_rylykdkp.json"  background="transparent"  speed="1"  style="width: 30px; height: 30px;"  loop  autoplay></lottie-player>
                                     </p>
                                 </div>
 
@@ -52,10 +52,9 @@
                                         </a>
                                     </h4>
                                     <p class="list-group-item-text">
-                                        <span class="label label-success">Running</span>
+                                        <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_rylykdkp.json"  background="transparent"  speed="1"  style="width: 30px; height: 30px;"  loop  autoplay></lottie-player>
                                     </p>
-                                </div>
-
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -68,6 +67,7 @@
             </div>
         </div>
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
         <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
         <!------ Include the above in your HEAD tag ---------->
