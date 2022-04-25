@@ -34,14 +34,18 @@
                             <div class="list-group">
                                 <div class="list-group-item">
                                     <h4 class="list-group-item-heading">
-                                        Backend
-                                        <a href="#"  data-toggle="tooltip" data-placement="bottom" title="Backend Services">
+                                        Storage
+                                        <a href="#"  data-toggle="tooltip" data-placement="bottom" title="Storage service status">
                                             <i class="fa fa-question-circle"></i>
                                         </a>
                                     </h4>
-                                    <p class="list-group-item-text">
-                                        <lottie-player src="https://assets6.lottiefiles.com/packages/lf20_rylykdkp.json"  background="transparent"  speed="1"  style="width: 30px; height: 30px;"  loop  autoplay></lottie-player>
-                                    </p>
+                                    @php
+                                        if(\Storage::disk('do')->missing('parking-data/')){
+                                            echo '<lottie-player src="https://assets3.lottiefiles.com/packages/lf20_qpwbiyxf.json"  background="transparent"  speed="1"  style="width: 30px; height: 30px;"  loop  autoplay></lottie-player>';
+                                        } else {
+                                            echo '<lottie-player src="https://assets6.lottiefiles.com/packages/lf20_rylykdkp.json"  background="transparent"  speed="1"  style="width: 30px; height: 30px;"  loop  autoplay></lottie-player>';
+                                        };
+                                    @endphp
                                 </div>
 
                                 <div class="list-group-item">
@@ -60,6 +64,22 @@
                                         }
                                     @endphp
                                 </div>
+
+                                <div class="list-group-item">
+                                    <h4 class="list-group-item-heading">
+                                        API Information
+                                        <a href="#"  data-toggle="tooltip" data-placement="bottom" title="Information about the environment">
+                                            <i class="fa fa-question-circle"></i>
+                                        </a>
+                                    </h4>
+                                    <p class="list-group-item-text">
+                                        App env: <strong>{{ config('app.env') }}</strong>
+                                    </p>
+                                    <p class="list-group-item-text">
+                                        App name: <strong>{{ config('app.name') }}</strong>
+                                    </p>
+                                </div>
+
                             </div>
                         </div>
                     </div>

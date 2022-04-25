@@ -82,7 +82,7 @@ class ParkingDataController extends Controller
         if (isset($validFields['latitude'], $validFields['longitude'])) {
             foreach ($json['features'] as $key => $feature) {
                 foreach ($feature['geometry']['coordinates'][0] as $coords) {
-                    $to = ['latitude' => $coords[1], 'longitude' => $coords[0]];
+                    $to = ['longitude' => $coords[0], 'latitude' => $coords[1]];
                     $from = ['latitude' => $validFields['latitude'], 'longitude' => $validFields['longitude']];
                     $distance = $this->calculateDistance($from, $to);
                     if ($distance > ($validFields['distance'] ?? 1)) {
@@ -91,8 +91,9 @@ class ParkingDataController extends Controller
                     }
                 }
             }
-            $json['features'] = array_values($json['features']);
-            $json['totalFeatures'] = count($json['features']);
+            //Reindexing the features
+            $json['features']       = array_values($json['features']);
+            $json['totalFeatures']  = count($json['features']);
         }
         return response()->json($json, BaseResponse::HTTP_OK);
     }
@@ -108,10 +109,10 @@ class ParkingDataController extends Controller
         //Calculate distance from latitude and longitude
         $theta = $from['longitude'] - $to['longitude'];
         $dist = sin(deg2rad($from['latitude'])) *
-            sin(deg2rad($to['latitude'])) +
-            cos(deg2rad($from['latitude'])) *
-            cos(deg2rad($to['latitude'])) *
-            cos(deg2rad($theta));
+                sin(deg2rad($to['latitude'])) +
+                cos(deg2rad($from['latitude'])) *
+                cos(deg2rad($to['latitude'])) *
+                cos(deg2rad($theta));
 
         $dist = acos($dist);
         $dist = rad2deg($dist);
