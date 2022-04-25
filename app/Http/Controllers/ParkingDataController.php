@@ -91,6 +91,7 @@ class ParkingDataController extends Controller
                     }
                 }
             }
+            $json['features'] = array_values($json['features']);
             $json['totalFeatures'] = count($json['features']);
         }
         return response()->json($json, BaseResponse::HTTP_OK);
