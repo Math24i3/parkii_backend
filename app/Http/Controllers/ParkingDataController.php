@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use JsonException;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
@@ -23,32 +24,25 @@ class ParkingDataController extends Controller
             ], BaseResponse::HTTP_NOT_FOUND);
         }
         $json = json_decode($zones, true, 512, JSON_THROW_ON_ERROR);
-        //$feature1 = $json['features'][0]['properties']['kategori'];
-        $distances = [];
-        foreach ($json['features'] as $feature) {
-            foreach ($feature['geometry']['coordinates'][0][0] as $coord) {
-                $distances[] = $this->calculateDistance([$coord[1], $coord[0]]);
-            }
-        }
+
         return response()->json($json, BaseResponse::HTTP_OK);
     }
 
-    private function calculateDistance(array $to): string
+    private function calculateDistance(array $from, array $to): string
     {
-        $from = ['latitude' => 55.46, 'longitude' => 8.45];
         //Calculate distance from latitude and longitude
-        $theta = $from['longitude'] - $to[1];
+        $theta = $from['longitude'] - $to['longitude'];
         $dist = sin(deg2rad($from['latitude'])) *
-            sin(deg2rad($to[0])) +
+            sin(deg2rad($to['latitude'])) +
             cos(deg2rad($from['latitude'])) *
-            cos(deg2rad($to[0])) *
+            cos(deg2rad($to['latitude'])) *
             cos(deg2rad($theta));
 
         $dist = acos($dist);
         $dist = rad2deg($dist);
         $miles = $dist * 60 * 1.1515;
 
-        return ($miles * 1.609344).' km';
+        return ($miles * 1.609344);
     }
 
     /**
@@ -57,6 +51,39 @@ class ParkingDataController extends Controller
      * @throws JsonException
      */
     public function restrictions(Request $request): BaseResponse {
+        // Only valid fields are allowed to pass through
+
+        $validFields = $request->only([
+            'latitude',
+            'longitude',
+            'distance'
+        ]);
+
+        // Validating the request data
+        $requestValidator = Validator::make($validFields, [
+            'latitude' => [
+                'numeric',
+                'nullable',
+            ],
+            'longitude' => [
+                'numeric',
+                'nullable',
+            ],
+            'distance' => [
+                'numeric',
+                'nullable',
+            ]
+        ]);
+
+        if ($requestValidator->fails()) {
+            $response = [
+                'message' => 'validation failed',
+                'errors' => $requestValidator->errors()
+                    ->all()
+            ];
+            return response()->json($response, BaseResponse::HTTP_BAD_REQUEST);
+        }
+
         $restrictions = Storage::disk('do')->get('parking-data/restrictions.json');
 
         if (!$restrictions) {
@@ -65,6 +92,23 @@ class ParkingDataController extends Controller
             ], BaseResponse::HTTP_NOT_FOUND);
         }
         $json = json_decode($restrictions, true, 512, JSON_THROW_ON_ERROR);
+
+        if ($validFields['latitude'] && $validFields['longitude']) {
+            foreach ($json['features'] as $key => $feature) {
+                foreach ($feature['geometry']['coordinates'][0] as $coords) {
+                    $to = ['latitude' => $coords[1], 'longitude' => $coords[0]];
+                    $from = ['latitude' => $validFields['latitude'], 'longitude' => $validFields['longitude']];
+                    $distance = $this->calculateDistance($from, $to);
+                    if ($distance > ($validFields['distance'] ?? 1)) {
+                        unset($json['features'][$key]);
+                        break;
+                    }
+                }
+            }
+            $json['totalFeatures'] = count($json['features']);
+        }
+
+
 
         return response()->json($json, BaseResponse::HTTP_OK);
     }
