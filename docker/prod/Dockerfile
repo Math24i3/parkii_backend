@@ -33,8 +33,8 @@ RUN docker-php-ext-enable redis
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Add user for laravel application
-RUN groupadd -g 1000 www
-RUN useradd -u 1000 -ms /bin/bash -g www www
+RUN groupadd -g 1001 www
+RUN useradd -u 1001 -ms /bin/bash -g www www
 
 # Copy existing application directory contents
 ADD . /var/www
