@@ -3,7 +3,7 @@ services:
 
     #Application (Laravel)
     app:
-        image: 127.0.0.1:5000/parkii_backend_app:latest
+        image: parkii_backend_app
         restart: always
         depends_on:
           - mysql
@@ -38,7 +38,7 @@ services:
 
     # Certificate provider service
     certbot:
-        image: certbot/certbot:latest
+        image: parkii_backend_cron
         volumes:
             - ./certbot/www/:/var/www/certbot/:rw
             - ./certbot/conf/:/etc/letsencrypt/:rw
