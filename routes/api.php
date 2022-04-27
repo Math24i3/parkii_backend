@@ -16,8 +16,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-header_remove('Access-Control-Allow-Origin');
-
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
