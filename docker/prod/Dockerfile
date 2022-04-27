@@ -46,6 +46,8 @@ RUN php artisan config:cache
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
 
+RUN chmod -R ug+w /var/www/storage
+
 # Change current user to www
 USER www
 
