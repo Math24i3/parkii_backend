@@ -16,9 +16,6 @@ services:
         extra_hosts:
             - "host.docker.internal:host-gateway"
         working_dir: /var/www
-        volumes:
-            - ./:/var/www
-            - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
 
     cron:
       image: 127.0.0.1:5000/parkii_backend_cron
@@ -52,6 +49,10 @@ services:
     #Nginx Service
     webserver:
         image: nginx:alpine
+        deploy:
+            placement:
+                constraints:
+                    - node.role == manager
         restart: always
         depends_on:
             - app

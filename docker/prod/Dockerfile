@@ -39,7 +39,7 @@ RUN useradd -u 1001 -ms /bin/bash -g www www
 # Copy existing application directory contents
 ADD . /var/www
 
-COPY crontab /etc/crontabs/root
+ADD ./php/local.ini /usr/local/etc/php/conf.d/local.ini
 
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
