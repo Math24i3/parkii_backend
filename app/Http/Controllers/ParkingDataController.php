@@ -80,12 +80,20 @@ class ParkingDataController extends Controller
         $json = json_decode($restrictions, true, 512, JSON_THROW_ON_ERROR);
 
         if (isset($validFields['latitude'], $validFields['longitude'])) {
+            $distanceLimit = $validFields['distance'] ?? 1;
             foreach ($json['features'] as $key => $feature) {
                 foreach ($feature['geometry']['coordinates'][0] as $coords) {
-                    $to = ['longitude' => $coords[0], 'latitude' => $coords[1]];
-                    $from = ['latitude' => $validFields['latitude'], 'longitude' => $validFields['longitude']];
-                    $distance = $this->calculateDistance($from, $to);
-                    if ($distance > ($validFields['distance'] ?? 1)) {
+                    $distance = $this->calculateDistance(
+                        [
+                            'latitude' => $validFields['latitude'],
+                            'longitude' => $validFields['longitude']
+                        ],
+                        [
+                            'longitude' => $coords[0],
+                            'latitude' => $coords[1]
+                        ]
+                    );
+                    if ($distance > $distanceLimit) {
                         unset($json['features'][$key]);
                         break;
                     }
