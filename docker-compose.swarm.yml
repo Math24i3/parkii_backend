@@ -3,7 +3,10 @@ services:
 
     #Application (Laravel)
     app:
-        image: 127.0.0.1:5000/parkii_backend_app:latest
+        image: 127.0.0.1:5000/parkii_backend_app
+        build:
+            context: .
+            dockerfile: docker/prod/Dockerfile
         restart: always
         depends_on:
           - mysql
@@ -18,9 +21,16 @@ services:
             - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
 
     cron:
-      image: 127.0.0.1:5000/parkii_backend_app:latest
+      image: 127.0.0.1:5000/parkii_backend_cron
+      build:
+        context: .
+        dockerfile: docker/prod/cron.dockerfile
+        args:
+          - UID=${UID:-1001}
+          - GID=${GID:-1001}
       volumes:
         - ./:/var/www
+
     # Redis instance
     redis:
         restart: always
