@@ -28,7 +28,6 @@ services:
         args:
           - UID=${UID:-1001}
           - GID=${GID:-1001}
-      container_name: cron
       volumes:
         - ./:/var/www
       networks:
@@ -36,7 +35,6 @@ services:
 
     # Redis instance
     redis:
-        container_name: redis
         restart: always
         tty: true
         image: redis:alpine
@@ -58,7 +56,6 @@ services:
     #Nginx Service
     webserver:
         image: nginx:alpine
-        container_name: webserver
         restart: always
         depends_on:
             - app
@@ -78,7 +75,6 @@ services:
     mysql:
         image: mysql:5.7.22
         command: --max_allowed_packet=32505856
-        container_name: mysql
         restart: always
         tty: true
         ports:
@@ -95,8 +91,7 @@ services:
 #Docker Networks
 networks:
     app-network:
-      external:
-        name: app-network
+        driver: bridge
 
 #Volumes
 volumes:
