@@ -3,7 +3,7 @@ services:
 
     #Application (Laravel)
     app:
-        image: parkii_backend_app
+        image: 127.0.0.1:5000/parkii_backend_app:latest
         restart: always
         depends_on:
           - mysql
@@ -18,13 +18,9 @@ services:
             - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
 
     cron:
-        image: 127.0.0.1:5000/parkii_backend_cron:latest
-        args:
-          - UID=${UID:-1001}
-          - GID=${GID:-1001}
+      image: 127.0.0.1:5000/parkii_backend_app:latest
       volumes:
         - ./:/var/www
-
     # Redis instance
     redis:
         restart: always
@@ -38,7 +34,7 @@ services:
 
     # Certificate provider service
     certbot:
-        image: parkii_backend_cron
+        image: certbot/certbot:latest
         volumes:
             - ./certbot/www/:/var/www/certbot/:rw
             - ./certbot/conf/:/etc/letsencrypt/:rw
