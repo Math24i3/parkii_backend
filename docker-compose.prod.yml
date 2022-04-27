@@ -6,14 +6,6 @@ services:
         build:
             context: .
             dockerfile: docker/prod/Dockerfile
-        deploy:
-          replicas: 2
-          restart_policy:
-            max_attempts: 3
-            condition: on-failure
-          update_config:
-            parallelism: 3
-            delay: 10s
         restart: always
         depends_on:
           - mysql
