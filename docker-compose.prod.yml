@@ -6,7 +6,6 @@ services:
         build:
             context: .
             dockerfile: docker/prod/Dockerfile
-        container_name: app
         deploy:
           replicas: 2
           restart_policy:
