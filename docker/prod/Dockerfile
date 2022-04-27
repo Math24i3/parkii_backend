@@ -33,8 +33,8 @@ RUN docker-php-ext-enable redis
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Add user for laravel application
-#RUN groupadd -g 1001 www
-#RUN useradd -u 1001 -ms /bin/bash -g www www
+RUN groupadd -g 1001 www
+RUN useradd -u 1001 -ms /bin/bash -g www www
 
 # Copy existing application directory contents
 ADD . /var/www
@@ -44,11 +44,10 @@ ADD ./php/local.ini /usr/local/etc/php/conf.d/local.ini
 RUN composer install --optimize-autoloader --no-dev
 RUN php artisan config:cache
 # Copy existing application directory permissions
-#COPY --chown=www:www . /var/www
-
+COPY --chown=www:www . /var/www
 
 # Change current user to www
-#USER www
+USER www
 
 
 # Expose port 9000 and start php-fpm server
