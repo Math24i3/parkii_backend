@@ -95,7 +95,8 @@ services:
 #Docker Networks
 networks:
     app-network:
-        driver: bridge
+      external:
+        name: app-network
 
 #Volumes
 volumes:
