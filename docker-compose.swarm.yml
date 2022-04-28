@@ -13,8 +13,6 @@ services:
         tty: true
         environment:
             SERVICE_NAME: app
-        extra_hosts:
-            - "host.docker.internal:host-gateway"
         working_dir: /var/www
 
     # Redis instance
@@ -58,6 +56,10 @@ services:
     #MySQL Service
     mysql:
         image: mysql:5.7.22
+        deploy:
+          placement:
+            constraints:
+              - node.role == manager
         command: --max_allowed_packet=32505856
         restart: always
         tty: true
