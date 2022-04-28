@@ -47,7 +47,6 @@ RUN php artisan config:cache
 RUN php artisan optimize
 RUN php artisan route:cache
 RUN php artisan cache:clear
-RUN php artisan migrate --force
 
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
