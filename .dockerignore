@@ -1,0 +1,17 @@
+/.git*
+/.idea*
+.dockerignore
+.editorconfig
+storage/mysql-data
+vendor/
+bootstrap/cache
+!bootstrap/cache/.gitignore
+Dockerfile
+_ide_helper.php
+docker-compose.yml
+docker-compose.swarm.yml
+docker-compose.prod.yml
+.gitattributes
+.gitignore
+/docker
+crontab
