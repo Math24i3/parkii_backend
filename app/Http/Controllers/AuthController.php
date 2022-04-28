@@ -21,19 +21,19 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'phone'     => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:8',
-            'car'       => 'nullable|string|min:7'
+            'name'          => 'required|string|max:255|min:1',
+            'email'         => 'required|string|email|max:255|min:1|unique:users',
+            'password'      => 'required|string|min:8',
+            'phone'         => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:8',
+            'license_plate' => 'nullable|string|min:2|max:7'
         ]);
 
         $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
-            'phone' => $validatedData['phone'] ?? null,
-            'car' => $validatedData['car']  ?? null
+            'name'      => $validatedData['name'],
+            'email'     => $validatedData['email'],
+            'password'  => Hash::make($validatedData['password']),
+            'phone'     => $validatedData['phone'] ?? null,
+            'car'       => $validatedData['car']  ?? null
         ]);
 
         if (!$user) {
@@ -45,8 +45,8 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
+            'access_token'  => $token,
+            'token_type'    => 'Bearer',
         ], BaseResponse::HTTP_OK);
     }
 
