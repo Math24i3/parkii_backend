@@ -39,8 +39,6 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 # Copy existing application directory contents
 ADD . /var/www
 
-COPY crontab /etc/crontabs/root
-
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
 
