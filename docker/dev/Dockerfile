@@ -51,6 +51,8 @@ ADD . /var/www
 
 RUN chmod +x bootstrap.sh
 
+RUN cp .env.example .env
+
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
 
