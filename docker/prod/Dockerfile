@@ -59,7 +59,7 @@ COPY --chown=www:www . /var/www
 
 RUN chmod -R ug+w /var/www/storage
 RUN chmod +x bootstrap.sh
-RUN chmod +rw .env
+RUN chmod +rwx .env
 RUN chown -R www:www bootstrap.sh
 RUN chown -R www:www .env
 
