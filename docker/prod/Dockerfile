@@ -40,9 +40,6 @@ RUN useradd -u 1001 -ms /bin/bash -g www www
 # Copy existing application directory contents
 ADD . /var/www
 
-RUN chmod +x bootstrap.sh
-RUN chown -R www:www bootstrap.sh
-
 ADD ./php/local.ini /usr/local/etc/php/conf.d/local.ini
 
 RUN composer install --optimize-autoloader --no-dev
@@ -56,6 +53,8 @@ RUN php artisan cache:clear
 COPY --chown=www:www . /var/www
 
 RUN chmod -R ug+w /var/www/storage
+RUN chmod +x bootstrap.sh
+RUN chown -R www:www bootstrap.sh
 
 # Change current user to www
 USER www
@@ -63,4 +62,4 @@ USER www
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
-CMD ["./bootstrap.sh"]
+CMD ["bootstrap.sh"]
