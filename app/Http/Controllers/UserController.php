@@ -7,7 +7,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
+use function Psy\debug;
 
 /**
  *
@@ -95,11 +97,39 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return Response
+     * @param $user
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($user): JsonResponse
     {
-        //
+        $currentUser = Auth::id();
+
+        if (!$currentUser) {
+            $response = [
+                'message' => 'Unauthorized'
+            ];
+            return response()->json($response, BaseResponse::HTTP_UNAUTHORIZED);
+        }
+
+        if ($currentUser !== (int)$user) {
+            $response = [
+                'message' => "You don't have permission to do this"
+            ];
+            return response()->json($response, BaseResponse::HTTP_UNAUTHORIZED);
+        }
+
+        $delete = User::destroy($user);
+
+        if (!$delete) {
+            $response = [
+                'message' => 'An error occurred while deleting account'
+            ];
+            return response()->json($response, BaseResponse::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $response = [
+            'message' => 'User was deleted successfully'
+        ];
+        return response()->json($response, BaseResponse::HTTP_OK);
     }
 }
