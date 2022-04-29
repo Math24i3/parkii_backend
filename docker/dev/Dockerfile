@@ -49,7 +49,7 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 # Copy existing application directory contents
 ADD . /var/www
 
-RUN chmod +x bootstrap.sh
+RUN chmod +x bootstrap.local.sh
 
 RUN cp .env.example .env
 
@@ -61,4 +61,4 @@ USER www
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
-CMD ["./bootstrap.sh"]
+CMD ["./bootstrap.local.sh"]
