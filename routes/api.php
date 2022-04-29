@@ -17,21 +17,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/test', function () {
-    return env('APP_ID');
-});
 
+//PROTECTED
 Route::group(['middleware' => 'auth:sanctum'], function () {
+    // user
     Route::get('/user', [AuthController::class, 'user']);
     Route::apiResource('/users', UserController::class);
-    Route::post('/upload', [DOSpacesController::class, 'store']);
-
+    // parking
     Route::prefix('parking')->group(function () {
         Route::get('/zones', [ParkingDataController::class, 'zones']);
         Route::get('/restrictions', [ParkingDataController::class, 'restrictions']);
     });
+    // upload
+    Route::post('/upload', [DOSpacesController::class, 'store']);
 });
+
 
 
