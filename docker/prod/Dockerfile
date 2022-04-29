@@ -41,6 +41,7 @@ RUN useradd -u 1001 -ms /bin/bash -g www www
 ADD . /var/www
 
 RUN chmod +x bootstrap.sh
+RUN chown -R www:www bootstrap.sh
 
 ADD ./php/local.ini /usr/local/etc/php/conf.d/local.ini
 
