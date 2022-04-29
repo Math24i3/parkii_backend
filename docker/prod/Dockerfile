@@ -50,7 +50,7 @@ ADD . /var/www
 
 ADD ./php/local.ini /usr/local/etc/php/conf.d/local.ini
 
-RUN cp .env.example .env
+RUN cat > .env
 
 RUN composer install --optimize-autoloader --no-dev
 
@@ -65,6 +65,7 @@ COPY --chown=www:www . /var/www
 RUN chmod -R ug+w /var/www/storage
 RUN chmod +x bootstrap.sh
 RUN chown -R www:www bootstrap.sh
+RUN chown -R www:www .env
 
 # Change current user to www
 USER www
