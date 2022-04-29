@@ -78,9 +78,6 @@
                                     <p class="list-group-item-text">
                                         App name: <strong>{{ config('app.name') }}</strong>
                                     </p>
-                                    <p class="list-group-item-text">
-                                        App ID: <strong>{{ env('APP_ID') }}</strong>
-                                    </p>
                                 </div>
 
                             </div>
