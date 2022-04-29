@@ -54,11 +54,6 @@ RUN cat > .env
 
 RUN composer install --optimize-autoloader --no-dev
 
-RUN php artisan config:cache
-RUN php artisan optimize
-RUN php artisan route:cache
-RUN php artisan cache:clear
-
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
 
