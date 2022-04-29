@@ -24,6 +24,11 @@ RUN apt-get update && apt-get install -y \
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# doppler install
+RUN curl -sLf --retry 3 --tlsv1.2 --proto "=https" 'https://packages.doppler.com/public/cli/gpg.DE2A7741A397C129.key' | apt-key add -
+RUN echo "deb https://packages.doppler.com/public/cli/deb/debian any-version main" | tee /etc/apt/sources.list.d/doppler-cli.list
+RUN apt-get update && apt-get install doppler
+
 # Install extensions
 RUN pecl install redis
 RUN docker-php-ext-install pdo pdo_mysql zip exif pcntl gd
