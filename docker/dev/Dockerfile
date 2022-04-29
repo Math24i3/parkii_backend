@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
-    libzip-dev
+    libzip-dev \
+    uuid-runtime
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -39,6 +40,8 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 # Copy existing application directory contents
 ADD . /var/www
 
+RUN chmod +x bootstrap.sh
+
 # Copy existing application directory permissions
 COPY --chown=www:www . /var/www
 
@@ -47,4 +50,4 @@ USER www
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
-CMD ["php-fpm"]
+CMD ["./bootstrap.sh"]
