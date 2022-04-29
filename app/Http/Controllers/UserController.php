@@ -84,7 +84,8 @@ class UserController extends Controller
             return response()->json($response, BaseResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
         $response = [
-            'message' => 'User was updated'
+            'message' => 'User was updated',
+            'user' => $updateResponse
         ];
         return response()->json($response, BaseResponse::HTTP_OK);
 

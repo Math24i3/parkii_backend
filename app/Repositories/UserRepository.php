@@ -12,18 +12,22 @@ class UserRepository
      * Update a user
      * @param $id
      * @param $data
-     * @return bool
+     * @return User|null
      */
-    public function update($id, $data): bool
+    public function update($id, $data): ?User
     {
         $user = User::find($id);
-
         if (!$user) {
-            return false;
+            return null;
         }
 
-        $user->fill($data);
+        try {
+            $user->fill($data);
+            $user->save();
+        } catch (\Exception $exception) {
+            return null;
+        }
 
-        return $user->save();
+        return $user;
     }
 }
