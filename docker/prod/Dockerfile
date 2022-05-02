@@ -50,7 +50,7 @@ ADD . /var/www
 
 ADD ./php/local.ini /usr/local/etc/php/conf.d/local.ini
 
-RUN composer install --optimize-autoloader --no-dev
+RUN composer install --optimize-autoloader --no-dev --ignore-platform-reqs
 
 RUN cp .env.example .env
 
