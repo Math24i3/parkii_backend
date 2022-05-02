@@ -14,6 +14,16 @@ use Symfony\Component\HttpFoundation\Response as BaseResponse;
  */
 class ParkingDataController extends Controller
 {
+
+    /**
+     * Create a new ParkingDataController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     /**
      * @param Request $request
      * @return BaseResponse
