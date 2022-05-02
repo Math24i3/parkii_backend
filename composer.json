@@ -12,7 +12,8 @@
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "twilio/sdk": "^6.36"
+        "twilio/sdk": "^6.36",
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

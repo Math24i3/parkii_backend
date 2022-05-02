@@ -17,14 +17,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// auth
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::group([
+    'middleware' => 'auth:api'
+], function ($router) {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::get('/user', [AuthController::class, 'userProfile']);
 
-//PROTECTED
-Route::group(['middleware' => 'auth:sanctum'], function () {
-    // user
-    Route::get('/user', [AuthController::class, 'user']);
+    //user
     Route::apiResource('/users', UserController::class);
     // parking
     Route::prefix('parking')->group(function () {
