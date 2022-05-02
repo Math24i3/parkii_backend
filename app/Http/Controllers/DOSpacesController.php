@@ -14,6 +14,16 @@ class DOSpacesController extends Controller
 {
 
     /**
+     * Create a new DOSpacesController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
+    /**
      * @param Request $request
      * @return BaseResponse
      */

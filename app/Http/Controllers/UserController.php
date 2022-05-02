@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\Response as BaseResponse;
  */
 class UserController extends Controller
 {
+
+
     /**
      * @var UserRepository
      */
@@ -26,6 +28,7 @@ class UserController extends Controller
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
+        $this->middleware('auth:api');
     }
 
     /**
