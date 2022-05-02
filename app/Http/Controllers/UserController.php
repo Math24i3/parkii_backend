@@ -9,7 +9,6 @@ use Illuminate\Http\Response;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
-use function Psy\debug;
 
 /**
  *
