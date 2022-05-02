@@ -70,14 +70,23 @@ class UserController extends Controller
      * @param $user
      * @return JsonResponse
      */
-    public function update(Request $request, $user): JsonResponse
+    public function update(Request $request, User $user): JsonResponse
     {
+
+        if (Auth::id() !== $user->id) {
+            $response = [
+                'message' => 'You are not allowed to do this.'
+            ];
+            return response()->json($response, BaseResponse::HTTP_UNAUTHORIZED);
+        }
         $validatedData = $request->validate([
             'name'              => 'string|max:255|min:1',
             'email'             => 'string|email|max:255|min:1|unique:users',
             'phone'             => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:8',
             'license_plate'     => 'nullable|string|min:2|max:7'
         ]);
+
+
 
         $updateResponse = $this->userRepository->update($user, $validatedData);
 
