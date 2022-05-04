@@ -30,4 +30,8 @@ class RestrictionService
         ];
     }
 
+    public function isItSunday() {
+        return Carbon::now()->dayOfWeek === 0;
+    }
+
 }

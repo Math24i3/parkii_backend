@@ -125,25 +125,84 @@ class RestrictionController extends Controller
             'restriction' => $restriction,
             'rule' => null,
             'parking_allowed' => 'yes',
+            'ticket_required' => 'no',
             'limit' => null
         ];
 
-        if ($restriction->restriktion !== 'ja') {
+        if ($restriction->restriktion !== "ja") {
             switch ($restriction->p_ordning) {
                 case null:
                     break;
-                case '3 timers restriktion':
-                    $response['rule'] = 'Parking is restricted to 3 hours';
-                    $response['limit'] = $this->restrictionService->limitedParking(3);
+                case "3 timers restriktion":
+                    $response["rule"] = "Parking is restricted to 3 hours";
+                    $response["limit"] = $this->restrictionService->limitedParking(3);
                     break;
-                case 'Besøgsplads':
-                    $response['rule'] = 'Visiting parking';
+                case "Besøgsplads, privat ordning, privat fællesvej":
+                case "Besøgsplads":
+                    $response["rule"] = "Visiting parking";
                     break;
-                case 'Ambassade parkering':
-                    $response['rule'] = 'Embassy parking';
-                    $response['parking_allowed'] = 'no';
+                case "Ambassade parkering":
+                    //TODO if car is of type ambasade then yes
+                    $response["rule"] = "Embassy parking";
+                    $response["parking_allowed"] = "criteria";
                     break;
-
+                case "Gul betalingszone":
+                case "Rød betalingszone":
+                case "Grøn betalingszone":
+                case "Blå betalingszone":
+                    $response["rule"] = "Payment zone";
+                    if ($this->restrictionService->isItSunday()) {
+                        $response['ticket_required'] = 'no';
+                    } else {
+                        $response['ticket_required'] = 'yes';
+                    }
+                    $response["parking_allowed"] = "yes";
+                    break;
+                case "Delebil parkering":
+                    $response["rule"] = "Shared car parking";
+                    //TODO if car is of type delebil then yes
+                    $response["parking_allowed"] = "criteria";
+                    break;
+                case "El-Bil plads":
+                    $response["rule"] = "Electric car parking";
+                    //TODO if car is of type electric car then yes
+                    $response["parking_allowed"] = "criteria";
+                    break;
+                case "Handicap parkering":
+                case "Handicap parkering, privat ordning, privat fællesvej":
+                    $response["rule"] = "Disabled person parking";
+                    //TODO if car is of type disabled person then yes
+                    $response["parking_allowed"] = "criteria";
+                    break;
+                case "Motorcykel parkering":
+                    $response["rule"] = "Motorbike parking";
+                    if ($this->restrictionService->isItSunday()) {
+                        $response['ticket_required'] = 'no';
+                    } else {
+                        $response['ticket_required'] = 'yes';
+                    }
+                    $response["parking_allowed"] = "yes";
+                    break;
+                case '"Off. reguleret':
+                case "Off. reguleret, privat grund":
+                    $response["rule"] = "Regulated private parking";
+                    $response["parking_allowed"] = "no";
+                    break;
+                case "Privat ordning, privat fællesvej":
+                case "Privat ordning, diverse":
+                case "Privat ordning":
+                case '"Privat ordning':
+                    $response["rule"] = "Private parking";
+                    $response["parking_allowed"] = "condition";
+                    break;
+                case "Taxiholdeplads":
+                    $response["rule"] = "Taxi parking";
+                    //TODO check if car is taxi
+                    $response["parking_allowed"] = "no";
+                    break;
+                case "Turistbus plads":
+                    $response["rule"] = "Turist-bus parking";
+                    $response["parking_allowed"] = "no";
             }
         }
 
