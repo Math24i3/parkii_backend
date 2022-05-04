@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('restrictions', function (Blueprint $table) {
-            $table->string('FID')->primary()->index();
+            $table->integer('id')->primary()->index();
             $table->integer('vejkode')->nullable();
             $table->string('vejnavn')->nullable();
             $table->integer('antal_pladser')->nullable();
@@ -28,7 +28,6 @@ return new class extends Migration
             $table->string('rettelsedato')->nullable();
             $table->string('oprettelsesdato')->nullable();
             $table->string('bemaerkning')->nullable();
-            $table->integer('id')->nullable();
             $table->string('restriktionstype')->nullable();
             $table->string('restriktionstekst')->nullable();
 

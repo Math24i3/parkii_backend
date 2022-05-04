@@ -97,7 +97,7 @@ class RestrictionController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        return response()->json(['message' => 'POST not supported'], Response::HTTP_UNAUTHORIZED);
     }
 
     /**
@@ -120,7 +120,7 @@ class RestrictionController extends Controller
      */
     public function update(Request $request, Restriction $restriction)
     {
-        return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        return response()->json(['message' => 'PUT not supported'], Response::HTTP_UNAUTHORIZED);
     }
 
     /**
@@ -131,7 +131,7 @@ class RestrictionController extends Controller
      */
     public function destroy(Restriction $restriction)
     {
-        return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        return response()->json(['message' => 'DELETE not supported'], Response::HTTP_UNAUTHORIZED);
     }
 
     /**

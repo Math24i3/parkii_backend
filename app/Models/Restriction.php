@@ -12,12 +12,7 @@ class Restriction extends Model
     public $timestamps = FALSE;
     public $incrementing = false;
 
-    protected $primaryKey = 'FID';
-
-    protected $hidden = ['vejkode'];
-
     protected $fillable = [
-        'FID',
         'vejkode',
         'vejnavn',
         'antal_pladser',
