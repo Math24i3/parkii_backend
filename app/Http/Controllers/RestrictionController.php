@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Restriction;
+use App\Services\RestrictionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +14,18 @@ use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 class RestrictionController extends Controller
 {
+
+    protected RestrictionService $restrictionService;
+
+    /**
+     * @param RestrictionService $restrictionService
+     */
+    public function __construct(RestrictionService $restrictionService)
+    {
+        $this->restrictionService = $restrictionService;
+    }
+
+
     /**
      * Return restrictions in a GeoJson format
      * @param Request $request
@@ -108,7 +121,35 @@ class RestrictionController extends Controller
      */
     public function show(Restriction $restriction): JsonResponse
     {
-        return response()->json($restriction, Response::HTTP_OK);
+        $response = [
+            'restriction' => $restriction,
+            'rule' => null,
+            'parking_allowed' => 'yes',
+            'limit' => null
+        ];
+
+        if ($restriction->restriktion !== 'ja') {
+            switch ($restriction->p_ordning) {
+                case null:
+                    break;
+                case '3 timers restriktion':
+                    $response['rule'] = 'Parking is restricted to 3 hours';
+                    $response['limit'] = $this->restrictionService->limitedParking(3);
+                    break;
+                case 'Besøgsplads':
+                    $response['rule'] = 'Visiting parking';
+                    break;
+                case 'Ambassade parkering':
+                    $response['rule'] = 'Embassy parking';
+                    $response['parking_allowed'] = 'no';
+                    break;
+
+            }
+        }
+
+
+
+        return response()->json($response, Response::HTTP_OK);
     }
 
     /**
