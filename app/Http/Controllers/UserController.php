@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 /**
@@ -64,17 +65,54 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param $user
+     * @param User $user
      * @return JsonResponse
      */
-    public function update(Request $request, $user): JsonResponse
+    public function update(Request $request, User $user): JsonResponse
     {
+        if ($user->id !== Auth::id()) {
+            $response = [
+                'message' => 'Unauthorized'
+            ];
+            return response()->json($response, BaseResponse::HTTP_UNAUTHORIZED);
+        }
+
+
         $validatedData = $request->validate([
             'name'              => 'string|max:255|min:1',
             'email'             => 'string|email|max:255|min:1|unique:users',
             'phone'             => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:8',
             'license_plate'     => 'nullable|string|min:2|max:7'
         ]);
+
+        if (isset($validatedData['license_plate']) && env('CAR_API_TOKEN')) {
+            $apiURL = 'http://api.nrpla.de/' . $validatedData['license_plate'];
+            $response = Http::get($apiURL, [
+                'api_token' => env('CAR_API_TOKEN')
+            ]);
+
+            if (isset($response->json()['data']) && $data = $response->json()['data']) {
+                if ($data['registration_status'] !== 'Registreret') {
+                    $response = [
+                        'message' => 'The car is not registered',
+                        'errors' => [
+                            'license_plate' => 'The license plate is not registered'
+                        ]
+                    ];
+                    return response()->json($response, BaseResponse::HTTP_NOT_FOUND);
+                }
+                $validatedData['type'] = $data['type'] ?? null;
+                $validatedData['fuel_type'] = $data['fuel_type'] ?? null;
+            } else {
+                $response = [
+                    'message' => 'The car was not found or is not registered',
+                    'errors' => [
+                        'license_plate' => 'invalid'
+                    ]
+                ];
+                return response()->json($response, BaseResponse::HTTP_NOT_FOUND);
+            }
+        }
 
         $updateResponse = $this->userRepository->update($user, $validatedData);
 

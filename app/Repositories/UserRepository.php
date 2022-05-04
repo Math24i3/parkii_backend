@@ -14,13 +14,8 @@ class UserRepository
      * @param $data
      * @return User|null
      */
-    public function update($id, $data): ?User
+    public function update(User $user, $data): ?User
     {
-        $user = User::find($id);
-        if (!$user) {
-            return null;
-        }
-
         try {
             $user->fill($data);
             $user->save();
