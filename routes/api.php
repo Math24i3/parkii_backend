@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DOSpacesController;
 use App\Http\Controllers\ParkingDataController;
+use App\Http\Controllers\RestrictionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,7 +30,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // parking
     Route::prefix('parking')->group(function () {
         Route::get('/zones', [ParkingDataController::class, 'zones']);
-        Route::get('/restrictions', [ParkingDataController::class, 'restrictions']);
+        Route::apiResource('restrictions', RestrictionController::class);
     });
     // upload
     Route::post('/upload', [DOSpacesController::class, 'store']);
