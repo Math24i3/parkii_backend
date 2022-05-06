@@ -38,7 +38,8 @@ class RestrictionController extends Controller
         $validFields = $request->only([
             'latitude',
             'longitude',
-            'distance'
+            'distance',
+            'restrictionIds'
         ]);
 
         // Validating the request data
@@ -54,6 +55,10 @@ class RestrictionController extends Controller
             'distance' => [
                 'numeric',
                 'nullable',
+            ],
+            'restrictionIds' => [
+                'array',
+                'nullable'
             ]
         ]);
 
@@ -64,6 +69,10 @@ class RestrictionController extends Controller
                     ->all()
             ];
             return response()->json($response, BaseResponse::HTTP_BAD_REQUEST);
+        }
+
+        if (isset($validFields['restrictionIds'])) {
+            return response()->json($this->restrictionService->restrictionsByIds($validFields['restrictionIds']), BaseResponse::HTTP_OK);
         }
 
         $restrictions = Storage::disk('do')->get('parking-data/restrictions.json');
@@ -96,8 +105,8 @@ class RestrictionController extends Controller
                 }
             }
             //Reindexing the features
-            $json['features']       = array_values($json['features']);
-            $json['totalFeatures']  = count($json['features']);
+            $json['features'] = array_values($json['features']);
+            $json['totalFeatures'] = count($json['features']);
         }
         return response()->json($json, BaseResponse::HTTP_OK);
     }
@@ -121,94 +130,9 @@ class RestrictionController extends Controller
      */
     public function show(Restriction $restriction): JsonResponse
     {
-        $response = [
-            'restriction' => $restriction,
-            'rule' => null,
-            'parking_allowed' => 'yes',
-            'ticket_required' => 'no',
-            'limit' => null
-        ];
+        $result = $this->restrictionService->determineRestriction($restriction);
 
-        if ($restriction->restriktion !== "ja") {
-            switch ($restriction->p_ordning) {
-                case null:
-                    break;
-                case "3 timers restriktion":
-                    $response["rule"] = "Parking is restricted to 3 hours";
-                    $response["limit"] = $this->restrictionService->limitedParking(3);
-                    break;
-                case "Besøgsplads, privat ordning, privat fællesvej":
-                case "Besøgsplads":
-                    $response["rule"] = "Visiting parking";
-                    break;
-                case "Ambassade parkering":
-                    //TODO if car is of type ambasade then yes
-                    $response["rule"] = "Embassy parking";
-                    $response["parking_allowed"] = "criteria";
-                    break;
-                case "Gul betalingszone":
-                case "Rød betalingszone":
-                case "Grøn betalingszone":
-                case "Blå betalingszone":
-                    $response["rule"] = "Payment zone";
-                    if ($this->restrictionService->isItSunday()) {
-                        $response['ticket_required'] = 'no';
-                    } else {
-                        $response['ticket_required'] = 'yes';
-                    }
-                    $response["parking_allowed"] = "yes";
-                    break;
-                case "Delebil parkering":
-                    $response["rule"] = "Shared car parking";
-                    //TODO if car is of type delebil then yes
-                    $response["parking_allowed"] = "criteria";
-                    break;
-                case "El-Bil plads":
-                    $response["rule"] = "Electric car parking";
-                    //TODO if car is of type electric car then yes
-                    $response["parking_allowed"] = "criteria";
-                    break;
-                case "Handicap parkering":
-                case "Handicap parkering, privat ordning, privat fællesvej":
-                    $response["rule"] = "Disabled person parking";
-                    //TODO if car is of type disabled person then yes
-                    $response["parking_allowed"] = "criteria";
-                    break;
-                case "Motorcykel parkering":
-                    $response["rule"] = "Motorbike parking";
-                    if ($this->restrictionService->isItSunday()) {
-                        $response['ticket_required'] = 'no';
-                    } else {
-                        $response['ticket_required'] = 'yes';
-                    }
-                    $response["parking_allowed"] = "yes";
-                    break;
-                case '"Off. reguleret':
-                case "Off. reguleret, privat grund":
-                    $response["rule"] = "Regulated private parking";
-                    $response["parking_allowed"] = "no";
-                    break;
-                case "Privat ordning, privat fællesvej":
-                case "Privat ordning, diverse":
-                case "Privat ordning":
-                case '"Privat ordning':
-                    $response["rule"] = "Private parking";
-                    $response["parking_allowed"] = "condition";
-                    break;
-                case "Taxiholdeplads":
-                    $response["rule"] = "Taxi parking";
-                    //TODO check if car is taxi
-                    $response["parking_allowed"] = "no";
-                    break;
-                case "Turistbus plads":
-                    $response["rule"] = "Turist-bus parking";
-                    $response["parking_allowed"] = "no";
-            }
-        }
-
-
-
-        return response()->json($response, Response::HTTP_OK);
+        return response()->json($result, Response::HTTP_OK);
     }
 
     /**
