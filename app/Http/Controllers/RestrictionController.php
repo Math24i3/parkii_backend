@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Restriction;
+use App\Services\RestrictionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -13,6 +14,18 @@ use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 class RestrictionController extends Controller
 {
+
+    protected RestrictionService $restrictionService;
+
+    /**
+     * @param RestrictionService $restrictionService
+     */
+    public function __construct(RestrictionService $restrictionService)
+    {
+        $this->restrictionService = $restrictionService;
+    }
+
+
     /**
      * Return restrictions in a GeoJson format
      * @param Request $request
@@ -25,7 +38,8 @@ class RestrictionController extends Controller
         $validFields = $request->only([
             'latitude',
             'longitude',
-            'distance'
+            'distance',
+            'restrictionIds'
         ]);
 
         // Validating the request data
@@ -41,6 +55,10 @@ class RestrictionController extends Controller
             'distance' => [
                 'numeric',
                 'nullable',
+            ],
+            'restrictionIds' => [
+                'array',
+                'nullable'
             ]
         ]);
 
@@ -51,6 +69,10 @@ class RestrictionController extends Controller
                     ->all()
             ];
             return response()->json($response, BaseResponse::HTTP_BAD_REQUEST);
+        }
+
+        if (isset($validFields['restrictionIds'])) {
+            return response()->json($this->restrictionService->restrictionsByIds($validFields['restrictionIds']), BaseResponse::HTTP_OK);
         }
 
         $restrictions = Storage::disk('do')->get('parking-data/restrictions.json');
@@ -83,8 +105,8 @@ class RestrictionController extends Controller
                 }
             }
             //Reindexing the features
-            $json['features']       = array_values($json['features']);
-            $json['totalFeatures']  = count($json['features']);
+            $json['features'] = array_values($json['features']);
+            $json['totalFeatures'] = count($json['features']);
         }
         return response()->json($json, BaseResponse::HTTP_OK);
     }
@@ -108,7 +130,9 @@ class RestrictionController extends Controller
      */
     public function show(Restriction $restriction): JsonResponse
     {
-        return response()->json($restriction, Response::HTTP_OK);
+        $result = $this->restrictionService->determineRestriction($restriction);
+
+        return response()->json($result, Response::HTTP_OK);
     }
 
     /**
