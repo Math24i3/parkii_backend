@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v1
 
@@ -20,6 +20,16 @@ jobs:
       - name: Run test suite
         run: ./vendor/bin/phpstan analyse
 
+      - name: Build the image
+        uses: appleboy/ssh-action@v0.1.2
+        with:
+          host: ${{secrets.SSH_HOST}} # IP of server
+          key: ${{secrets.SSH_KEY}} # SSH KEY
+          username: ${{secrets.SSH_USER}} # USERNAME
+          script: |
+            cd parkii_backend/ && sh build.sh
+            echo 'Build APP image'
+
   deploy:
     needs: build
     runs-on: ubuntu-20.04
@@ -30,8 +40,7 @@ jobs:
           host: ${{secrets.SSH_HOST}} # IP of server
           key: ${{secrets.SSH_KEY}} # SSH KEY
           username: ${{secrets.SSH_USER}} # USERNAME
-
           script: |
             cd parkii_backend/ && sh deploy.sh
-            echo 'Deployment Successful'
+            echo 'Deployed app to Production'
 
