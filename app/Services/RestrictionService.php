@@ -39,6 +39,7 @@ class RestrictionService
 
     /**
      * Determine a restriction output based on the restriction given
+     * @param Restriction $restriction
      * @return array
      */
     public function determineRestriction(Restriction $restriction): array
@@ -46,7 +47,7 @@ class RestrictionService
         $format = [
             'rule' => null,
             'parking_allowed' => 'yes',
-            'ticket_required' => 'no',
+            'ticket_required' => false,
             'limit' => null
         ];
         switch ($restriction->p_ordning) {
@@ -65,7 +66,7 @@ class RestrictionService
                 break;
             case RestrictionContract::VISITING_PARKING_PRIVATE:
             case RestrictionContract::VISITING_PARKING:
-            $format["rule"] = "Visiting parking";
+                $format["rule"] = "Visiting parking";
                 if ($restriction->restriktion === 'ja') {
                     $format["ticket_required"] = 'yes';
                 }
@@ -81,9 +82,9 @@ class RestrictionService
             case RestrictionContract::BLUE_ZONE:
                 $format["rule"] = "Payment zone";
                 if ($this->isItSunday()) {
-                    $format['ticket_required'] = 'no';
+                    $format['ticket_required'] = false;
                 } else {
-                    $format['ticket_required'] = 'yes';
+                    $format['ticket_required'] = true;
                 }
                 $format["parking_allowed"] = "yes";
                 break;
@@ -106,9 +107,9 @@ class RestrictionService
             case RestrictionContract::MOTORBIKE_PARKING:
                 $format["rule"] = "Motorbike parking";
                 if ($this->isItSunday()) {
-                    $format['ticket_required'] = 'no';
+                    $format['ticket_required'] = false;
                 } else {
-                    $format['ticket_required'] = 'yes';
+                    $format['ticket_required'] = true;
                 }
                 $format["parking_allowed"] = "yes";
                 break;
