@@ -143,8 +143,7 @@ class RestrictionService
      * @param int $time
      * @return array
      */
-    #[ArrayShape(['now' => Carbon::class, 'end' => Carbon::class])]
-    private function limitedParking(int $time) : array {
+    protected function limitedParking(int $time) : array {
         return [
             'now' => Carbon::now()->format('H:i'),
             'end' => Carbon::now()->addHours($time)->format('H:i')
@@ -154,16 +153,16 @@ class RestrictionService
     /**
      * @return bool
      */
-    private function isItSunday() {
+    protected function isItSunday() {
         return Carbon::now()->dayOfWeek === 0;
     }
 
     /**
-     * @param $regex
-     * @param $text
+     * @param string $regex
+     * @param string $text
      * @return bool
      */
-    private function match($regex, $text): bool
+    private function match(string $regex, string $text): bool
     {
         if (preg_match("/$regex/", $text,$match)){
             return true;

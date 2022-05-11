@@ -27,18 +27,18 @@ class AuthController extends Controller
             'phone'         => 'nullable|string|regex:/^([0-9\s\-\+\(\)]*)$/|min:8',
             'license_plate' => 'nullable|string|min:2|max:7'
         ]);
-
-        $user = User::create([
-            'name'      => $validatedData['name'],
-            'email'     => $validatedData['email'],
-            'password'  => Hash::make($validatedData['password']),
-            'phone'     => $validatedData['phone'] ?? null,
-            'car'       => $validatedData['car']  ?? null
-        ]);
-
-        if (!$user) {
+        try {
+            $user = User::create([
+                'name'      => $validatedData['name'],
+                'email'     => $validatedData['email'],
+                'password'  => Hash::make($validatedData['password']),
+                'phone'     => $validatedData['phone'] ?? null,
+                'car'       => $validatedData['car']  ?? null
+            ]);
+        } catch (\Exception $exception) {
             return response()->json([
                 'message' => 'user could not be created',
+                'error' => $exception->getMessage()
             ], BaseResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
 

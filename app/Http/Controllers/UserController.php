@@ -30,38 +30,6 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param $user
-     * @return Response
-     */
-    public function show($user)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param Request $request
@@ -134,10 +102,10 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param $user
+     * @param User $user
      * @return JsonResponse
      */
-    public function destroy($user): JsonResponse
+    public function destroy(User $user): JsonResponse
     {
         $currentUser = Auth::id();
 
@@ -148,7 +116,7 @@ class UserController extends Controller
             return response()->json($response, BaseResponse::HTTP_UNAUTHORIZED);
         }
 
-        if ($currentUser !== (int)$user) {
+        if ($currentUser !== $user->id) {
             $response = [
                 'message' => "You don't have permission to do this"
             ];

@@ -162,9 +162,9 @@ class RestrictionController extends Controller
      * Returns the distance to and from in kilometers
      * @param array $from
      * @param array $to
-     * @return string
+     * @return float
      */
-    private function calculateDistance(array $from, array $to): string
+    private function calculateDistance(array $from, array $to): float
     {
         //Calculate distance from latitude and longitude
         $theta = $from['longitude'] - $to['longitude'];
