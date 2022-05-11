@@ -66,7 +66,7 @@
 
                                 <div class="list-group-item">
                                     <h4 class="list-group-item-heading">
-                                        API Information
+                                        API Service Information
                                         <a href="#"  data-toggle="tooltip" data-placement="bottom" title="Information about the environment">
                                             <i class="fa fa-question-circle"></i>
                                         </a>
