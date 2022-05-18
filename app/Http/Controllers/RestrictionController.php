@@ -6,6 +6,7 @@ use App\Models\Restriction;
 use App\Services\RestrictionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use JsonException;
@@ -74,15 +75,18 @@ class RestrictionController extends Controller
         if (isset($validFields['restrictionIds'])) {
             return response()->json($this->restrictionService->restrictionsByIds($validFields['restrictionIds']), BaseResponse::HTTP_OK);
         }
-
-        $restrictions = Storage::disk('do')->get('parking-data/restrictions.json');
-
-        if (!$restrictions) {
-            return response()->json([
-                'message' => 'Requested data was not found'
-            ], BaseResponse::HTTP_NOT_FOUND);
+        if ($cache = Cache::get(json_encode($validFields, JSON_THROW_ON_ERROR))) {
+            $json = $cache;
+        } else {
+            $restrictions = Storage::disk('do')->get('parking-data/restrictions.json');
+            if (!$restrictions) {
+                return response()->json([
+                    'message' => 'Requested data was not found'
+                ], BaseResponse::HTTP_NOT_FOUND);
+            }
+            $json = json_decode($restrictions, true, 512, JSON_THROW_ON_ERROR);
+            Cache::put(json_encode($validFields, JSON_THROW_ON_ERROR), $json, now()->addMinutes(10));
         }
-        $json = json_decode($restrictions, true, 512, JSON_THROW_ON_ERROR);
 
         if (isset($validFields['latitude'], $validFields['longitude'])) {
             $distanceLimit = $validFields['distance'] ?? 1;
