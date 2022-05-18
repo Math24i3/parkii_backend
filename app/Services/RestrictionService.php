@@ -56,9 +56,7 @@ class RestrictionService
             case RestrictionContract::THREE_HOUR_RESTRICTION:
                 $format["rule"] = "Parking is restricted to 3 hours";
                 //$response['keywords'] = preg_split("~(?:\d+|\D+)\K~", $restriction["restriktionstekst"],0, PREG_SPLIT_NO_EMPTY);
-                if($restriction->restriktionstype === "Tidsbegrænsning"
-                    && isset($restriction->restriktionstekst)
-                    && $this->match('[0-9]+(?:\,|\-)[0-9]+', $restriction["restriktionstekst"])) {
+                if($restriction->restriktionstype === "Tidsbegrænsning" && $this->match('[0-9]+(?:\,|\-)[0-9]+', $restriction["restriktionstekst"])) {
                     $format["rule"] .= " between " . $restriction["restriktionstekst"];
                 }
 
