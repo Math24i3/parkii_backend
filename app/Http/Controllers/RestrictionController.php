@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use JsonException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
+use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 class RestrictionController extends Controller
 {
@@ -73,9 +74,15 @@ class RestrictionController extends Controller
         }
 
         if (isset($validFields['restrictionIds'])) {
-            return response()->json($this->restrictionService->restrictionsByIds($validFields['restrictionIds']), BaseResponse::HTTP_OK);
+            $restrictions = $this->restrictionService->restrictionsByIds($validFields['restrictionIds']);
+            if (!$restrictions) {
+                return response()->json([
+                    'message' => 'Requested data was not found'
+                ], BaseResponse::HTTP_NOT_FOUND);
+            }
+            return response()->json($restrictions, BaseResponse::HTTP_OK);
         }
-        if ($cache = Cache::get(json_encode($validFields, JSON_THROW_ON_ERROR))) {
+        if ($cache = Cache::get('restrictions')) {
             $json = $cache;
         } else {
             $restrictions = Storage::disk('do')->get('parking-data/restrictions.json');
@@ -85,7 +92,7 @@ class RestrictionController extends Controller
                 ], BaseResponse::HTTP_NOT_FOUND);
             }
             $json = json_decode($restrictions, true, 512, JSON_THROW_ON_ERROR);
-            Cache::put(json_encode($validFields, JSON_THROW_ON_ERROR), $json, now()->addMinutes(10));
+            Cache::put('restrictions', $json, now()->addMinutes(10));
         }
 
         if (isset($validFields['latitude'], $validFields['longitude'])) {
