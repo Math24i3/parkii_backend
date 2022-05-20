@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Validator;
 use JsonException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Response as BaseResponse;
-use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 class RestrictionController extends Controller
 {
