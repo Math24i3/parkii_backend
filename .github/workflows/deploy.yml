@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  test_and_build:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v1
@@ -34,7 +34,7 @@ jobs:
             echo 'Build APP image'
 
   deploy:
-    needs: build
+    needs: test_and_build
     runs-on: ubuntu-20.04
     steps:
       - name: Deploy Parkii API to Digital Ocean droplet
@@ -46,10 +46,6 @@ jobs:
           script: |
             cd parkii_backend/ && sh deploy.sh
             echo 'Deployed app to Production'
-  Test:
-    needs: deploy
-    runs-on: ubuntu-20.04
-    steps:
       - name: Check if API is runnning
         uses: jtalk/url-health-check-action@v2
         with:
