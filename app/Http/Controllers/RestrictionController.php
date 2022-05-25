@@ -98,7 +98,7 @@ class RestrictionController extends Controller
             $distanceLimit = $validFields['distance'] ?? 1;
             foreach ($json['features'] as $key => $feature) {
                 foreach ($feature['geometry']['coordinates'][0] as $coords) {
-                    $distance = $this->calculateDistance(
+                    $distance = RestrictionService::calculateDistance(
                         [
                             'latitude' => $validFields['latitude'],
                             'longitude' => $validFields['longitude']
@@ -166,27 +166,5 @@ class RestrictionController extends Controller
     public function destroy(Restriction $restriction)
     {
         return response()->json(['message' => 'DELETE not supported'], Response::HTTP_UNAUTHORIZED);
-    }
-
-    /**
-     * Returns the distance to and from in kilometers
-     * @param array $from
-     * @param array $to
-     * @return float
-     */
-    private function calculateDistance(array $from, array $to): float
-    {
-        //Calculate distance from latitude and longitude
-        $theta = $from['longitude'] - $to['longitude'];
-        $dist = sin(deg2rad($from['latitude'])) *
-            sin(deg2rad($to['latitude'])) +
-            cos(deg2rad($from['latitude'])) *
-            cos(deg2rad($to['latitude'])) *
-            cos(deg2rad($theta));
-
-        $dist = acos($dist);
-        $dist = rad2deg($dist);
-
-        return (($dist * 60 * 1.1515) * 1.609344);
     }
 }

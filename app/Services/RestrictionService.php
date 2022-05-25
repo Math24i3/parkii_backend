@@ -79,7 +79,7 @@ class RestrictionService
             case RestrictionContract::GREEN_ZONE:
             case RestrictionContract::BLUE_ZONE:
                 $format["rule"] = "Payment zone";
-                if ($this->isItSunday()) {
+                if (self::isItSunday()) {
                     $format['ticket_required'] = false;
                 } else {
                     $format['ticket_required'] = true;
@@ -104,7 +104,7 @@ class RestrictionService
                 break;
             case RestrictionContract::MOTORBIKE_PARKING:
                 $format["rule"] = "Motorbike parking";
-                if ($this->isItSunday()) {
+                if (self::isItSunday()) {
                     $format['ticket_required'] = false;
                 } else {
                     $format['ticket_required'] = true;
@@ -151,7 +151,8 @@ class RestrictionService
     /**
      * @return bool
      */
-    protected function isItSunday() {
+    public static function isItSunday() {
+
         return Carbon::now()->dayOfWeek === 0;
     }
 
@@ -166,6 +167,28 @@ class RestrictionService
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns the distance to and from in kilometers
+     * @param array $from
+     * @param array $to
+     * @return float
+     */
+    public static function calculateDistance(array $from, array $to): float
+    {
+        //Calculate distance from latitude and longitude
+        $theta = $from['longitude'] - $to['longitude'];
+        $dist = sin(deg2rad($from['latitude'])) *
+            sin(deg2rad($to['latitude'])) +
+            cos(deg2rad($from['latitude'])) *
+            cos(deg2rad($to['latitude'])) *
+            cos(deg2rad($theta));
+
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+
+        return (($dist * 60 * 1.1515) * 1.609344);
     }
 
 }
